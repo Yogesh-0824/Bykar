@@ -1,0 +1,49 @@
+.background
+            {
+            background: #ffffff;
+            border:none;
+		color: #bebebe;
+            }
+.button_1
+            {
+            background: #41a9d4;
+           color: #ffffff;
+                        border:none;
+                        -moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	border-radius: 7px;
+	padding: 6px 30px;
+	font-family: verdana;
+            }
+    .background_2
+            {
+            background: #41a9d4;
+           	color: #ffffff;
+			 border:none;
+            -moz-border-radius: 7px;
+			-webkit-border-radius: 7px;
+			border-radius: 7px;
+			padding: 8px 40px;
+			font-family: verdana;
+            }
+.image_style
+{
+  width: 100px;
+  height: 100px;
+}
+.myFile {
+  position: relative;
+  overflow: hidden;
+  float: left;
+  clear: left;
+}
+.myFile input[type="file"] {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  font-size: 100px;
+  filter: alpha(opacity=3);
+  cursor: pointer;
+}

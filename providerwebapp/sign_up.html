@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="../js/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="../styles/sweetalert2.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue-light_blue.min.css">
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<link rel="stylesheet" href="../styles/style.css">
+<link rel="stylesheet" href="../styles/button.css">
+<script type="text/javascript" src="../js/jquery-3.0.0.min.js"></script>
+<script type="text/javascript" src="../js/base_url.js"></script>
+
+<script>
+function isValidEmailAddress(email) {
+    var pattern = new RegExp(/^[+a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i);
+    // alert( pattern.test(emailAddress) );
+    return pattern.test(email);
+};
+function date()
+{
+var today = new Date();
+var dd = today.getDate();
+var mm = today.getMonth()+1; //January is 0!
+var yyyy = today.getFullYear()-16;
+
+ if(dd<10){
+        dd='0'+dd
+    } 
+    if(mm<10){
+        mm='0'+mm
+    } 
+
+today = yyyy+'-'+mm+'-'+dd;
+
+document.getElementById("date").setAttribute("max", today);
+};
+
+    function readURL(input) {
+        console.log("in function");
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    $("#userfile").change(function(){
+        readURL(this);
+    });
+
+
+var type='-1';
+function myfunction1()
+{
+    type ='0';
+};
+function myfunction2()
+{
+    type ='1';
+};
+function myfunction3()
+{
+    type ='2';
+};
+function myfunction4()
+{
+    type ='3';
+};
+function myfunction5()
+{
+    type ='4';
+};
+
+$(document).ready(function(){
+   console.log("ready");
+    $("#submit").click(function(){
+      console.log("clicked");
+        var firstname = $("#firstname").val();
+        var lastname = $('#lastname').val();
+        var email= $('#email').val();
+        var mobileno = $('#mobileno').val();
+        var password = $('#password').val();
+        var confPassword = $('#confPassword').val();
+        var date = $('#date').val();
+        var state = $('#state').val();
+        var file_data = $('#userfile').prop('files')[0];
+        //form_data.append("userfile", file_data); 
+
+        var input = document.getElementById("userfile");
+        var file = input.files[0];
+
+        var name = $('#name').val();
+        var message="";
+        console.log(firstname,lastname,email,mobileno,password,confPassword,date,type, file_data, name);
+
+            if (firstname=="" || firstname==null || email=="" || email==null || mobileno=="" || mobileno==null  || password=="" || confPassword=="" || password==null || confPassword==null || date=="" || date==null  || state == "Select State" || state==null || type =="-1" || file_data == null) 
+            {
+               swal({
+                    title: 'Cannot Proceed',
+                    text: "Please fill all the fields to continue.",
+                    type: 'error',
+                    confirmButtonText: 'OK'
+                })
+            }
+            else  if ( mobileno.length!=10) {
+                message+="Please enter a 10 Digit Mobile Number.";
+                swal({
+                    title: 'Invalid Mobile',
+                    text: message,
+                    type: 'error',
+                    confirmButtonText: 'OK'
+                })
+            }
+            else  if (password!=confPassword) {
+                message+="Password and Confirm Password do not match \n";
+                swal({
+                    title: 'Password Mismatch',
+                    text: message,
+                    type: 'error',
+                    confirmButtonText: 'OK'
+                })
+            }
+            else  if (!isValidEmailAddress(email)) {
+                message+="Please enter a valid Email Address.";
+                swal({
+                    title: 'Invalid Email',
+                    text: message,
+                    type: 'error',
+                    confirmButtonText: 'OK'
+                })
+            }
+            else {
+                
+ var form_data = new FormData();
+                form_data.append("userfile", file_data);
+                form_data.append("first_name", firstname);
+                form_data.append("last_name", lastname);
+                form_data.append("email_address", email);
+                form_data.append("mobile_number", mobileno);
+                form_data.append("password", password);
+                form_data.append("state", state);
+                form_data.append("date_of_birth", date);
+                form_data.append("type", type);
+                form_data.append("name", name);
+
+               /*
+                var form_data = {   first_name: firstname,
+                                    last_name: lastname,
+                                    email_address : email,
+                                    mobile_number: mobileno,
+                                    password: password,
+                                    state: state,
+                                    date_of_birth: date,
+                                    type: type,
+                                    name: name
+                                };
+                */
+
+                console.log (form_data); 
+        $.ajax({
+            type: "POST",
+            url: base_url + "try_new_provider_sign_up.php",
+            data: form_data,
+           processData: false,
+           contentType: false,
+            success: function(response)
+            {console.log(response.message);
+                switch (response.message)
+                         {
+                            case "Success" :localStorage.otp = response.otp;
+                                            localStorage.id = response.id;
+                                            localStorage.type = type;
+                                            console.log(response.otp);
+                                            window.location.href = "sign_up_confirm_number.html";
+                                            break;
+                            //case "Account Exists": swal({
+                                                    // title: 'Account Exists',
+                                                    // text: "There is an account associated with these contact details.",
+                                                    // type: 'error',
+                                                    // confirmButtonText: 'OK'
+                                                    //    })
+                                           // break;
+                            default :         swal({
+                                                          title: 'Error',
+                                                          text: response.message,
+                                                          type: 'error',
+                                                          confirmButtonText: 'OK'
+                                                      })
+                                            break;
+                         }
+                console.log(response.message);
+             },
+              error:function(error){console.log(error);},
+            dataType: 'json'
+          });
+
+    }
+});
+});
+
+   </script>
+	<style>
+select {
+    padding:3px 100px;
+    margin: 0;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    -webkit-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+    -moz-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+    box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+    background: #f8f8f8;
+    color:#888;
+    border:none;
+    outline:none;
+    display: inline-block;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    cursor:pointer;
+}
+
+</style>
+
+</head>
+<body oncontextmenu="return false;" bgcolor="#f0f0f0">
+
+
+<table  width="100%" class="background"  border="0">
+	<tr>
+	<td align="center">
+		<input  type="image" src="./photo/bykar_ white.png" class="background" width="180px" height="50px">
+	</td>
+	</tr>
+	<tr>
+		<td bgcolor="#41a9d4" height="60px" align="center">
+			<font face="verdana" color="white" size="4"> SIGN UP</font>
+		
+		</td>
+	</tr>
+</table>
+<!--<form   name="signup_1" method="post" action="signup_2.html" onsubmit=" return validateForm()" action="upload.php" enctype="multipart/form-data" onclick="loading()">-->
+<table align="center" width="50%" border="0" bgcolor="#ffffff" style="box-shadow: 3px 3px 10px #888888; padding:10px;">
+<tr>
+<td align="center" colspan="0" rowspan="2">
+<div align="center">
+     <label  class="myFile" >
+     <!--   <img src="./photo/user.png" onclick=""> -->
+
+        <input type="file" name="userfile" accept=".jpg,.jpeg" id="userfile" onchange="loadFile(event)"/>
+        <img align="center" id="output" src="./user.png"  width="100px" height="100px" style="padding-right:20px" />
+        <input type="hidden" name="name" value=".jpg" id="name" />
+
+        
+        <script>
+            var loadFile = function(event) 
+                {
+             var reader = new FileReader();
+             reader.onload = function(){
+            var output = document.getElementById('output');
+             output.src = reader.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
+                };
+        </script>
+             
+        </label>
+        </div>
+
+</td>
+<td></td>
+ <td class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  
+                  <input class="mdl-textfield__input" type="text" pattern="[A-Z,a-z]*" id="firstname">
+                 <label  class="mdl-textfield__label" for="firstname">First Name</label>
+                 <span class="mdl-textfield__error">Only alphabets and no spaces, Please!</span>
+    </td>
+</tr>
+
+<tr>
+   
+    <td></td>
+	<td class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  
+                  <input class="mdl-textfield__input" type="text" pattern="[A-Z,a-z]*" id="lastname">
+                 <label  class="mdl-textfield__label" for="lastname">Last Name</label>
+                 <span class="mdl-textfield__error">Only alphabets and no spaces, Please!</span>
+	</td>
+	</tr>
+	<tr>
+	<td class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  
+                  <input class="mdl-textfield__input" type="email" id="email">
+                 <label  class="mdl-textfield__label" for="email">Email Address</label>
+	</td>
+    <td></td>
+    <td class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  
+                  <input class="mdl-textfield__input" type="integer" pattern="[0-9]*" id="mobileno" maxlength="10">
+                 <label  class="mdl-textfield__label" for="mobileno">Mobile Number (10 Digits)</label>
+                 <span class="mdl-textfield__error">Only numbers and no spaces, Please!</span>
+    </td>
+	</tr>
+	
+	<tr>
+	<td class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  
+                  <input  class="mdl-textfield__input" type="password" id="password">
+                 <label  class="mdl-textfield__label" for="password">Password</label>
+	</td>
+    <td></td>
+    <td class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  
+                  <input class="mdl-textfield__input" type="password" id="confPassword">
+                 <label  class="mdl-textfield__label" for="confPassword">Confirm Password</label>
+    </td>
+	</tr>
+	<tr>
+	
+	</tr>
+    <tr>
+        <td colspan="">
+         <font face="verdana" color="#bebebe" size="3"> Select State
+        </td>
+        <td width="20px"></td>
+        <td colspan="">
+         <font face="verdana" color="#bebebe" size="3"> Enter Date of Birth
+        </td>
+    </tr>
+    <tr>
+       <td colspan="">
+       <label>
+      <select align = "center" id="state">
+        <option selected disabled="true">Select State</option>
+        <option disabled="true"> ----------------------------- </option>
+        <option>Alabama</option>
+        <option>Alaska</option>
+        <option>Arizona</option>
+        <option>Arkansas</option>
+        <option>California</option>
+        <option>Colorado</option>
+        <option>Connecticut</option>
+        <option>Delaware</option>
+        <option>Florida</option>
+        <option>Georgia</option>
+        <option>Hawaii</option>
+        <option>Idaho</option>
+        <option>Illinois</option>
+        <option>Indiana</option>
+        <option>Iowa</option>
+        <option>Kansas</option>
+        <option>Kentucky</option>
+        <option>Louisiana</option>
+        <option>Maine</option>
+        <option>Maryland</option>
+        <option>Massachusetts</option>
+        <option>Michigan</option>
+        <option>Minnesota</option>
+        <option>Mississippi</option>
+        <option>Missouri</option>
+        <option>Montana</option>
+        <option>Nebraska</option>
+        <option>Nevada</option>
+        <option>New Hampshire</option>
+        <option>New Jersey</option>
+        <option>New Mexico</option>
+        <option>New York</option>
+        <option>North Carolina</option>
+        <option>North Dakota</option>
+        <option>Ohio</option>
+        <option>Oklahoma</option>
+        <option>Oregon</option>
+        <option>Pennsylvania</option>
+        <option>Rhode Island</option>
+        <option>South Carolina</option>
+        <option>South Dakota</option>
+        <option>Tennessee</option>
+        <option>Texas</option>
+        <option>Utah</option>
+        <option>Vermont</option>
+        <option>Virginia</option>
+        <option>Washington</option>
+        <option>West Virginia</option>
+        <option>Wisconsin</option>
+        <option>Wyoming</option>
+         </select>
+         </label>
+        </td>
+        <td></td>
+        <td colspan="">
+            <input type="date" id="date" onclick="date()">
+        </td>
+        <tr>
+            <td colspan="3" height="50px" ></td>
+        </tr>
+    <tr>
+        <td colspan="3" align="center">
+           <font face="verdana" color="#bebebe" size="3"> Select Travel Mode
+        </td>
+    </tr>
+     <tr>
+   <td colspan="3" align="center"> 
+   <div class="cc-selector" id="type">
+       <input id="walking" type="radio" name="mode"onclick="myfunction1()" / >
+        <label class="drinkcard-cc walking" for="walking" ></label>
+        <input id="bike" type="radio" name="mode" onclick="myfunction2()" />
+        <label class="drinkcard-cc bike" for="bike"></label>
+        <input id="mobike" type="radio" name="mode" onclick="myfunction3()" />
+        <label class="drinkcard-cc mobike" for="mobike"></label>
+        <input id="car" type="radio" name="mode"  onclick="myfunction4()"/>
+        <label class="drinkcard-cc car" for="car"></label>
+        <input id="pickup" type="radio" name="mode" onclick="myfunction5()"/>
+        <label class="drinkcard-cc pickup" for="pickup"></label>
+        
+    </div>
+    </td>
+   </tr>
+	<br>
+	<tr>
+		<td width="40px" colspan="2">
+			<br>
+		</td>
+	</tr>
+	<tr>
+	<td align="center" colspan="3">
+	 	 <!-- Primary-colored raised button with ripple -->
+            <button  id="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary">
+             NEXT
+            </button>
+	</td>
+	</tr>
+</table>
+<!--</form>-->
+
+<br>
+<br>
+<table align="center" border="0" width="40%">
+	<tr>
+		<td colspan="5">
+			<input align="center" type="image" src="./photo/Line.png" width="100%">
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<input type="image" src="./photo/hover-1.png" width="30px" height="30px">
+		</td>
+		<td align="center">
+			<input type="image" src="./photo/2.png" width="30px" height="30px">
+		</td >
+		<td align="center">
+			<input type="image" src="./photo/3.png" width="30px" height="30px">
+		</td>
+		<td align="center">
+			<input type="image" src="./photo/4.png" width="30px" height="30px">
+		</td>
+		<td align="center">
+			<input type="image" src="./photo/5.png" width="30px" height="30px">
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

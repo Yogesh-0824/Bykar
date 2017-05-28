@@ -1,0 +1,1 @@
+var base_url = 'http://192.168.43.116/bykarserver/webservices/';

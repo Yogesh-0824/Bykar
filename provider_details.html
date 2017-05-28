@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-pink.min.css">
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script type="text/javascript" src="./js/jquery-3.0.0.min.js"></script>
+<script type="text/javascript" src="./js/base_url.js"></script>
+<script src="./js/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="./styles/sweetalert2.min.css">
+  <!-- Uses a transparent header that draws on top of the layout's background -->
+<style>
+.demo-layout-transparent {
+  background:;
+}
+.demo-layout-transparent .mdl-layout__header,
+.demo-layout-transparent .mdl-layout__drawer-button {
+  /* This background is dark, so we set text to white. Use 87% black instead if
+     your background is light. */
+     background-color: #41a9d4;
+  color: black;
+}
+</style>
+
+<script>
+$(document).ready(function(){
+   console.log("ready");
+      console.log("clicked");
+              var id =localStorage.job_id;
+              console.log(id);
+                var form_data = {   id: id
+                                };
+                
+
+                console.log (form_data); 
+        $.ajax({
+            type: "POST",
+            url: base_url + "provider_fetch_selected_provider_data.php",
+            data: form_data,
+   
+            success: function(response)
+            {console.log(response.message);
+                switch (response.message)
+                         {
+                            case "Success" :
+
+                            			   var history_card="" ;
+                                           var status ;
+                                           //response.orders.size();
+                                           var size =response.orders.length;
+                                           var i=0;
+                                           if(response.orders[0].type=="0")
+                                             {
+                                                var status ="Walking" ;
+                                             }
+                                             if(response.orders[0].type=="1")
+                                             {
+                                                var status ="Bike" ;
+                                             }
+                                             if(response.orders[0].type=="2")
+                                             {
+                                                var status ="Motor Bike" ;
+                                             }
+                                             if(response.orders[0].type=="3")
+                                             {
+                                                var status ="Car" ;
+                                             }
+                                             if(response.orders[0].type=="4")
+                                             {
+                                                var status ="Pickup Truck" ;
+                                             }
+                                           for(i=0;i<size;i++)
+                                           {
+                                           	history_card+='<tr><td colspan="2" align="center"><font face="verdana" color="#41a9d4" size="3">Document Info:</font></td></tr><tr><td align="center" height="110px" width="110px" ><img align="center"  src="'+base_url+'uploads/'+response.orders[i].document_image_link+'"  width="100px" height="100px"/></td></tr><tr><td><font face="verdana" color="#41a9d4" size="2">Document type:</font></td><td align="right"><font face="verdana" color="#000000" size="2" id="documentType">'+response.orders[i].document_type+'</font></td></tr><tr><td><font face="verdana" color="#41a9d4" size="2">Issue state:</font></td><td align="right"><font face="verdana" color="#000000" size="2" id="issueState">'+response.orders[i].issue_state+'</font></td></tr><tr><td><font face="verdana" color="#41a9d4" size="2">Issue date:</font></td><td align="right"><font face="verdana" color="#000000" size="2" id="IssueDate"'+response.orders[i].issue_date+'></font></td></tr><tr><td><font face="verdana" color="#41a9d4" size="2">Validity:</font></td><td align="right"><font face="verdana" color="#000000" size="2" id="validity">'+response.orders[i].validity_date+'</font></td></tr><tr><td><font face="verdana" color="#41a9d4" size="2">Document number:</font></td><td align="right"><font face="verdana" color="#000000" size="2" id="documentNumber">'+response.orders[i].document_number+'</font></td></tr><tr><td><font face="verdana" color="#41a9d4" size="2">Name on document:</font></td><td align="right"><font face="verdana" color="#000000" size="2" id="nameOnDocument">'+response.orders[i].name_on_document+'</font></td></tr>';
+                                             
+                                           }
+                                           document.getElementById("profile_image").src = "http://192.168.1.12/bykarserver/webservices/uploads/"+response.orders[0].provider_image_link;
+                                           document.getElementById("id").innerHTML = id;
+                                           document.getElementById("fullName").innerHTML = response.orders[0].first_name + " " + response.orders[0].last_name;
+                                           document.getElementById("emailAddress").innerHTML = response.orders[0].email_address;
+                                           document.getElementById("mobile_number").innerHTML = response.orders[0].mobile_number;
+                                           document.getElementById("dob").innerHTML = response.orders[0].date_of_birth;
+                                           document.getElementById("type").innerHTML = status;
+                                           document.getElementById("vehicle_image_link").src = "http://192.168.1.12/bykarserver/webservices/uploads/"+response.orders[0].vehicle_image_link;
+                                           document.getElementById("registrationNumber").innerHTML = response.orders[0].registration_number;
+                                           document.getElementById("manufacturingYear").innerHTML = response.orders[0].manufacturing_year; 
+                                           document.getElementById("vehichleModel").innerHTML = response.orders[0].vehichle_model; 
+                                           document.getElementById("vehichleColor").innerHTML = response.orders[0].vehichle_color;  
+                                           document.getElementById("documentTable").innerHTML = history_card;
+                                            break;
+                            //case "Account Exists": swal({
+                                                    // title: 'Account Exists',
+                                                    // text: "There is an account associated with these contact details.",
+                                                    // type: 'error',
+                                                    // confirmButtonText: 'OK'
+                                                    //    })
+                                           // break;
+                            default :      console.log(response);
+                               swal({
+                                                          title: 'Error',
+                                                          text: response.message,
+                                                          type: 'error',
+                                                          confirmButtonText: 'OK'
+                                                      })
+                                            break;
+                         }
+                console.log(response.message, response.orders);
+             },
+              error:function(error){console.log(error);},
+            dataType: 'json'
+          });
+
+    
+
+});
+
+function fun_reject()
+{
+//----------------UPDATE provider_table SET status = '$value' WHERE provider_table.id = '$id';------------use this query-------------------------
+	var value ='-1';
+   var form_data = {   id:id,
+   					   value:value
+                   };
+     
+
+                console.log (form_data); 
+        $.ajax({
+            type: "POST",
+            url: base_url + "update_provider_status.php",
+            data: form_data,
+           success: function(response)
+            {console.log(response.message);
+                switch (response.message)
+                         {
+                            case "Success" :swal({
+                                                          title: 'Success',
+                                                          text: 'Provider has been de-activated',
+                                                          type: 'success',
+                                                          confirmButtonText: 'OK'
+                                                      })
+                                            window.location.href = "admin_portal.html";
+                                            break;
+                            default :       swal({
+                                                          title: 'Error',
+                                                          text: response.message,
+                                                          type: 'error',
+                                                          confirmButtonText: 'OK'
+                                                      })
+                                            break;
+                         }
+                console.log(response.message);
+             },
+              error:function(error){console.log(error);},
+            dataType: 'json'
+          });
+};
+function fun_accept()
+{
+	
+	//----------------UPDATE provider_table SET status = '$value' WHERE provider_table.id = '$id';------------use this query-------------------------
+	var value ='2';
+   var form_data = {   id:id,
+   					   value:value
+                   };
+     
+
+                console.log (form_data); 
+        $.ajax({
+            type: "POST",
+            url: base_url + "update_provider_status.php",
+            data: form_data,
+           success: function(response)
+            {console.log(response.message);
+                switch (response.message)
+                         {
+                            case "Success" :swal({
+                                                          title: 'Success',
+                                                          text: 'Provider has been activated',
+                                                          type: 'success',
+                                                          confirmButtonText: 'OK'
+                                                      })
+                                            window.location.href = "admin_portal.html";
+                                            break;
+                            default :       swal({
+                                                          title: 'Error',
+                                                          text: response.message,
+                                                          type: 'error',
+                                                          confirmButtonText: 'OK'
+                                                      })
+                                            break;
+                         }
+                console.log(response.message);
+             },
+              error:function(error){console.log(error);},
+            dataType: 'json'
+          });
+}
+
+</script>
+</head>
+<body bgcolor="#f0f0f0">
+<table  width="100%" class="background"  border="0">
+	
+	<tr>
+		<td bgcolor="#41a9d4" height="60px" align="center">
+			<font face="verdana" color="white" size="4">Provider Details</font>
+		
+		</td>
+	</tr>
+	<tr>
+	<td align="center">
+		<input  type="image" src="./photo/bykar_ white.png" class="background" width="180px" height="50px">
+	</td>
+	</tr>
+</table>
+
+<table width="40%" border="0" align="center" bgcolor="#ffffff" style="box-shadow: 3px 3px 10px #888888; padding:10px;">
+	<tr>
+		<td colspan="2" align="center" height="110px" width="110px"  >
+			<img align="center" id="profile_image" width="100px" height="100px"/>
+		</td>
+	</tr>
+
+	<tr>
+		<td height="7px"></td>
+	</tr>
+
+	<tr>
+		<td colspan="2">
+			<table border="0" width="100%" bgcolor="#FFFFFF" style="box-shadow: 3px 3px 10px #888888; padding:10px;">
+				<tr>
+					<td colspan="2" align="center">
+						<font face="verdana" color="#41a9d4" size="3">Personal Details</font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Provider ID:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="id"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Full Name:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="fullName"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Email Address:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="emailAddress"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Mobile Number:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="mobile_number"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Date Of Birth:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="dob"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Type:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="type"></font>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+
+	<tr>
+		<td height="7px"></td>
+	</tr>
+
+	<tr>
+		<td colspan="2">
+			<table border="0" width="100%" bgcolor="#FFFFFF" style="box-shadow: 3px 3px 10px #888888; padding:10px;">
+				<tr>
+					<td colspan="2" align="center">
+						<font face="verdana" color="#41a9d4" size="3">Provider's Vehicle Info:</font>
+					</td>
+				</tr>
+				<tr>
+					<td align="center" height="110px" width="110px"  >
+						<img align="center" id="vehicle_image_link" width="100px" height="100px"/>
+					</td>
+				</tr>
+
+				<tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Registration Number:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="registrationNumber"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Manufacturing Year:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="manufacturingYear"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Vehichle Model:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="vehichleModel"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<font face="verdana" color="#41a9d4" size="2">Vehichle Color:</font>
+					</td>
+					<td align="right">
+						<font face="verdana" color="#000000" size="2" id="vehichleColor"></font>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+
+	<tr>
+		<td height="7px"></td>
+	</tr>
+
+	<tr>
+		<td colspan="2">
+			<table border="0" width="100%" id="documentTable" bgcolor="#FFFFFF" style="box-shadow: 3px 3px 10px #888888; padding:10px;">
+				
+			</table>
+		</td>
+	</tr>
+
+	<tr>
+		<td align="center">
+				<button  id="showDetails" onclick="fun_reject()" value="'+response.orders[i].id+'" class="mdl-button mdl-js-button mdl-button--primary">Reject</button>
+		</td>
+		<td align="center">
+				<button  id="showDetails" onclick="fun_accept()" value="'+response.orders[i].id+'" class="mdl-button mdl-js-button mdl-button--primary">Accept</button>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

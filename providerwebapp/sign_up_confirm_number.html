@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="../js/sweetalert2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-3.0.0.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue-light_blue.min.css">
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<link rel="stylesheet" href="../styles/sweetalert2.min.css">
+<link rel="stylesheet" href="../styles/style.css">
+<script>
+var base_url = 'http://192.168.1.6/bykarserver/webservices/';
+$(document).ready(function(){
+   console.log("ready");
+    $("#submit").click(function(){
+      console.log("clicked");
+        var message= "";
+        var otp = $("#otp").val();
+        console.log(otp);
+
+        if (otp==null || otp=="" || otp.length!=6) 
+        {
+        	message+="Not a Valid OPT.\n";
+        	swal({
+                    title: 'Cannot Proceed',
+                    text: message,
+                    type: 'error',
+                    confirmButtonText: 'OK'
+                })
+        }
+       var server_otp = localStorage.otp;
+       var id_server = localStorage.id;
+        console.log(id_server, server_otp);
+        	if (server_otp!=otp) 
+        	{
+        		swal({
+                    title: 'OPT Mismatch',
+                    text: "OPT did not match",
+                    type: 'error',
+                    confirmButtonText: 'OK'
+                	})
+        	}
+            else {
+
+            	// ---------------------------------- otp match
+				        var form_data = 
+				        {
+				            otp: otp,
+				            id: id_server
+				       	};
+				        $.ajax({
+				            type: "POST",
+				            url: base_url + "provider_mobile_confirmation_otp.php",
+				            data: form_data,
+				            success: function(response)
+				            {
+				                 switch (response.message)
+				                         {
+				                            case "Success" : localStorage.token= response.token;
+				                            				 window.location.href = "sign_up_address.html";
+				                                            break;
+				                            case "Authentication Failed": swal({
+				                                                     		title: 'Authentication Failed',
+				                                                    		text: "Authentication of this OTP failed.",
+				                                                    		type: 'error',
+				                                                     		confirmButtonText: 'OK'
+				                                                     		   })
+				                                            break;
+				                            default :         swal({
+				                                                          title: 'Error',
+				                                                          text: response.message,
+				                                                          type: 'error',
+				                                                          confirmButtonText: 'OK'
+				                                                      })
+				                                            break;
+				                         }
+				                console.log(response.message);
+				             },
+				            error:function(error){console.log(error);},
+				            dataType: 'json'
+				          });
+   				 }
+    });
+});
+
+
+	
+	</script>
+	<style>
+		{
+	background-image: url('./photo/background.png');
+	background-size:contain;
+
+		}
+	
+</style>
+
+</head>
+<body onload="document.oncontextmenu = document.body.oncontextmenu = function() {return false;}">
+<table  width="100%" class="background"  border="0">
+	<tr>
+	<td align="center">
+		<input  type="image" src="./photo/bykar_ white.png" class="background" width="180px" height="50px">
+	</td>
+	</tr>
+	<tr>
+		<td bgcolor="#41a9d4" height="60px" align="center">
+			<font face="verdana" color="white" size="4"> SIGN UP</font>
+		
+		</td>
+	</tr>
+</table>
+<br>
+<br>
+<br>
+
+<table align="center" width="30%" border="0">
+<tr>
+	<td align="center" colspan="2" >
+		<font  face="verdana" color="#bebebe" size="4"> We have sent a One Tome Password(OTP) at your registered number.</font>
+	</td>
+</tr>
+<tr>
+	<td height="20px">
+		
+	</td>
+</tr>
+<tr>
+<td width="10%"></td>
+<td class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" >
+                  
+                  <input class="mdl-textfield__input" type="text"  id="otp" maxlength="6">
+                 <label  class="mdl-textfield__label" for="otp">OTP</label>
+               
+</td>
+</tr>	
+<br>
+<tr>
+	<td height="30px" colspan="2"></td>
+</tr>
+<tr>
+	<td align="center" colspan="2">
+		<!-- Primary-colored raised button with ripple -->
+            <button  id="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary">
+             NEXT
+            </button>
+	</td>
+	</tr>
+</table>
+
+<br>
+<br>
+<table align="center" border="0" width="40%">
+	<tr>
+		<td colspan="5">
+			<input align="center" type="image" src="./photo/Line.png" width="100%">
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<input type="image" src="./photo/hover-1.png" width="30px" height="30px">
+		</td>
+		<td align="center">
+			<input type="image" src="./photo/hover-2.png" width="30px" height="30px">
+		</td >
+		<td align="center">
+			<input type="image" src="./photo/3.png" width="30px" height="30px">
+		</td>
+		<td align="center">
+			<input type="image" src="./photo/4.png" width="30px" height="30px">
+		</td>
+		<td align="center">
+			<input type="image" src="./photo/5.png" width="30px" height="30px">
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>
