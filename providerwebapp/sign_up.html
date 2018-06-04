@@ -13,11 +13,14 @@
 <script type="text/javascript" src="../js/base_url.js"></script>
 
 <script>
+//---------------------------------------------------mail Validaion (javascript)---------------------------------------------------
 function isValidEmailAddress(email) {
     var pattern = new RegExp(/^[+a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i);
     // alert( pattern.test(emailAddress) );
     return pattern.test(email);
 };
+//----------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------today date input (js)------------------------------------------------------------
 function date()
 {
 var today = new Date();
@@ -36,6 +39,7 @@ today = yyyy+'-'+mm+'-'+dd;
 
 document.getElementById("date").setAttribute("max", today);
 };
+//----------------------------------------------------------------------------------------------------------------------------------
 
     function readURL(input) {
         console.log("in function");
